@@ -1,0 +1,7 @@
+C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\bin\Debug\TicTacToeAI.exe.config
+C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\bin\Debug\TicTacToeAI.exe
+C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\bin\Debug\TicTacToeAI.pdb
+C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\TicTacToeAI.csproj.CoreCompileInputs.cache
+C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\TicTacToeAI.exe
+C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\TicTacToeAI.pdb
+C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\TicTacToeAI.csprojAssemblyReference.cache
