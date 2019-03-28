@@ -4,12 +4,11 @@ using System.Linq;
 
 namespace TicTacToeAI
 {
-    class Board
+    public class Board
     {
         //Tiles of the board. Each slot can be occupied by a player-character
         public char[] Tiles = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
         public char[] Symbols = {' ','X','O'};
-        public const char AISymbol = 'X';
         //Dictionary containing a translation between layout-string and state-index in table
         //No need to include states where it's the player's turn, the AI cannot perform any actions in these cases
         public Dictionary<string, int> LayoutToState = new Dictionary<string, int>();
@@ -58,11 +57,11 @@ namespace TicTacToeAI
                     LayoutToState.Remove(Key);
                 else
                     i++;
-                n = LayoutToState.Count;            
+                n = LayoutToState.Count;
             }
-            
+
             //Reset indexes to account for removed gaps
-            for(n = 0; n < LayoutToState.Count; n++)
+            for (n = 0; n < LayoutToState.Count; n++)
             {
                 var Key = LayoutToState.ElementAt(n).Key;
                 LayoutToState[Key] = n;
@@ -90,15 +89,50 @@ namespace TicTacToeAI
             return LayoutToState[string.Join("", Tiles)];
         }
 
+        public List<int> GetAvailableSlots()
+        {
+            var freeSlots = new List<int>();
+            for(int k = 0; k < Tiles.Length; k++)            
+                if (Tiles[k] == ' ')
+                    freeSlots.Add(k);
+            
+            return freeSlots;
+        }
+
         public void WriteBoard()
         {
-            Console.WriteLine("------");
+            Console.WriteLine("---------------------------------------");
             Console.WriteLine("|" + Tiles[0] + "|" + Tiles[1] + "|" + Tiles[2] + "|");
             Console.WriteLine("------");
             Console.WriteLine("|" + Tiles[3] + "|" + Tiles[4] + "|" + Tiles[5] + "|");
             Console.WriteLine("------");
             Console.WriteLine("|" + Tiles[6] + "|" + Tiles[7] + "|" + Tiles[8] + "|");
-            Console.WriteLine("------");
+            Console.WriteLine("---------------------------------------");
+        }
+
+        public bool CheckForWinner(char symbol)
+        {
+            if(Tiles.Count(t => t == symbol) > 2)
+            {             
+                    //Up-down
+                    for (int k = 0; k < 3; k++)
+                        if (Tiles[0 + k] == symbol && Tiles[3 + k] == symbol && Tiles[6 + k] == symbol)
+                            return true;
+                    //Sideways
+                    for(int k = 0; k < 7; k+=3)
+                        if (Tiles[k] == symbol && Tiles[k + 1] == symbol && Tiles[k + 2] == symbol)
+                            return true;
+                    //Diagonal
+                    if (Tiles[0] == symbol && Tiles[4] == symbol && Tiles[8] == symbol || 
+                        Tiles[2] == symbol && Tiles[4] == symbol && Tiles[6] == symbol)
+                            return true;                
+            }
+            return false;
+        }
+
+        public bool IsDraw()
+        {
+            return !Tiles.Any(t => t == Symbols[0]) && !CheckForWinner(Symbols[1]) && !CheckForWinner(Symbols[2]);
         }
     }
 }

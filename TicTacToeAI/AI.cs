@@ -11,26 +11,35 @@ namespace TicTacToeAI
         int NStates;
         Board Board;
         double[,] QTable;
-        int[] StateCounters;
-        char Symbol;
-        const string FileName = "QTable.txt";
-        const string NFileName = "Iterations.txt";
+        int[,] StateCounters;
+        public char Symbol;
+        const string FileName = "QTable";
+        const string NFileName = "Iterations";
         string FilePath;
         string NFilePath;
         List<int> VisitedStates;
         List<int> PerformedActions;
         double eps;
         double DiscountFactor;
+        static Random RandomGenerator = new Random();
+        float LearningRate = 0.1f;
 
         public AI(Board _board, double discount, double Eps, char Symb)
         {
-            FilePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)+ "\\"+FileName;
-            NFilePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + NFileName;
+            FilePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)+ "\\"+FileName+Symb+".txt";
+            NFilePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\" + NFileName+Symb + ".txt";
             Board = _board;
             NStates = Board.LayoutToState.Count;
             Symbol = Symb;
             QTable = new double[NStates,9];
-            StateCounters = new int[NStates];
+            StateCounters = new int[NStates,9];
+            //Initialize optimistic Q-values (Maximal reward of 1)
+            for (int k = 0; k < QTable.GetLength(0); k++)
+                for (int i = 0; i < QTable.GetLength(1); i++)
+                {
+                    QTable[k, i] = 1;
+                    StateCounters[k, i] = 1;
+                }
             VisitedStates = new List<int>();
             PerformedActions = new List<int>();
             ReadFromFile();
@@ -38,47 +47,43 @@ namespace TicTacToeAI
             DiscountFactor = discount;
         }
 
-        public void UpdateQTable(int Return, int k, bool ChangeEps)
+        public void UpdateQTable(int Return, int k, bool ChangeEps = true)
         {
             if(ChangeEps)
                 eps = 1 / k;
             for(int i = VisitedStates.Count - 1; i >= 0; i--)
             {
-                var Discount = Math.Pow(DiscountFactor, i - (VisitedStates.Count - 1));
+                var Discount = Math.Pow(DiscountFactor, (VisitedStates.Count - 1) - i);
                 var state = VisitedStates[i];
                 var action = PerformedActions[i];
-                var N = StateCounters[state]++;
-                QTable[state, action] += 1/N * (Discount * Return - QTable[state, action]);
+                var N = ++StateCounters[state, action];
+                //Using UCB1 upper-bound Q-value: 
+                //Something goes wrong here, Q-value grows even when AI is losing
+                QTable[state, action] += LearningRate/N * (Discount * Return - QTable[state, action]) + Math.Sqrt(2*Math.Log(k)/N);
             }
-            SaveQTableToFile();
+            //SaveQTableToFile();
             VisitedStates.Clear();
             PerformedActions.Clear();
         }
         
         public void PerformActionFromState()
         {
-            var state = Board.GetCurrentStateIndex();                    
-            int action=0;
-            double prevMax=QTable[state,0];
-            
-            for(int i = 1; i < QTable.GetLength(1); i++)          
-                if (QTable[state, i] > prevMax)
-                    action = i;           
+            var state = Board.GetCurrentStateIndex();                               
+            var availableActions = Board.GetAvailableSlots();
+            int action = availableActions[0];
+            double prevMax = QTable[state, action];
 
-            Random rand = new Random();
-            var randomAction = rand.Next(0, 8);
-            if (rand.NextDouble() < eps)
+            for (int i = 1; i < availableActions.Count; i++)          
+                if (QTable[state, availableActions[i]] > prevMax)
+                    action = availableActions[i];
+
+            var randomIndex = RandomGenerator.Next(availableActions.Count);
+            var randomAction = availableActions[randomIndex];
+            if (RandomGenerator.NextDouble() < eps)
                 action = randomAction;
-            var result = Board.SetTile(action, Symbol);
-            //Invalid move, recursive retry
-            if (!result)
-                PerformActionFromState();
-            else
-            {
-                VisitedStates.Add(state);
-                PerformedActions.Add(action);
-                Board.WriteBoard();
-            }          
+            Board.SetTile(action, Symbol);          
+            VisitedStates.Add(state);
+            PerformedActions.Add(action);                           
         }
 
 
@@ -86,7 +91,7 @@ namespace TicTacToeAI
         {
             if (!File.Exists(FilePath))
             {
-                Console.WriteLine("The Q-Table file in location "+FilePath+" could not be found, creating file based on current Q-table.");
+                Console.WriteLine("The Q-Table file in location "+FilePath+" could not be found, creating new file from zero-valued Q-table.");
                 SaveQTableToFile();    
             }
             else
@@ -100,11 +105,14 @@ namespace TicTacToeAI
                         for (int i = 0; i < 9; i++)
                             QTable[k, i] = double.Parse(values[i]);
                     }
-                    lines = File.ReadAllLines(NFilePath);
-                    for(int k = 0; k < NStates; k++)                    
-                        StateCounters[k] = int.Parse(lines[k]);                       
-                    
 
+                    lines = File.ReadAllLines(NFilePath);
+                    for (int k = 0; k < NStates; k++)
+                    {
+                        var values = lines[k].Split(';');
+                        for (int i = 0; i < 9; i++)
+                            StateCounters[k, i] = int.Parse(values[i]);
+                    }                      
                 }
                 catch(Exception ex)
                 {
@@ -114,7 +122,7 @@ namespace TicTacToeAI
             }
         }
 
-        private void SaveQTableToFile()
+        public void SaveQTableToFile()
         {
             List<string> TableToWrite = new List<string>();
             try
@@ -129,10 +137,12 @@ namespace TicTacToeAI
                 File.WriteAllLines(FilePath, TableToWrite.ToArray());
 
                 TableToWrite.Clear();
-                for (int k = 0; k < NStates; k++)
+                for (int k = 0; k < StateCounters.GetLength(0); k++)
                 {
-                    var value = StateCounters[k].ToString();
-                    TableToWrite.Add(value);
+                    StringBuilder line = new StringBuilder();
+                    for (int i = 0; i < StateCounters.GetLength(1); i++)
+                        line.Append(StateCounters[k, i].ToString()).Append(";");
+                    TableToWrite.Add(line.ToString().TrimEnd(';'));
                 }
                 File.WriteAllLines(NFilePath, TableToWrite.ToArray());
             }
