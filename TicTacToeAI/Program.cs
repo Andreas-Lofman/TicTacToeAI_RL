@@ -16,7 +16,7 @@ namespace TicTacToeAI
 
         static void Main(string[] args)
         {
-            bool UseGUI = false;
+            bool UseGUI = true;
 
             if (UseGUI)
             { 
@@ -139,6 +139,8 @@ namespace TicTacToeAI
                     Console.WriteLine("The Player (O) won!");
                     AIReward = -1;
                 }
+                if (Board.IsDraw())
+                    Console.WriteLine("Draw!");
 
                 AIX.UpdateQTable(AIReward, k, true);
                 AIX.SaveQTableToFile();

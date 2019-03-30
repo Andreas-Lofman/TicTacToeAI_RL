@@ -65,7 +65,7 @@ namespace TicTacToeAI
             PerformedActions.Clear();
         }
         
-        public void PerformActionFromState(int k)
+        public int PerformActionFromState(int k)
         {
             var state = Board.GetCurrentStateIndex();                               
             var availableActions = Board.GetAvailableSlots();
@@ -88,7 +88,8 @@ namespace TicTacToeAI
                 action = randomAction;
             Board.SetTile(action, Symbol);          
             VisitedStates.Add(state);
-            PerformedActions.Add(action);                           
+            PerformedActions.Add(action);
+            return action;
         }
 
 
