@@ -58,24 +58,29 @@ namespace TicTacToeAI
                 var action = PerformedActions[i];
                 var N = ++StateCounters[state, action];
                 //Using UCB1 upper-bound Q-value: 
-                //Something goes wrong here, Q-value grows even when AI is losing
-                QTable[state, action] += LearningRate/N * (Discount * Return - QTable[state, action]) + Math.Sqrt(2*Math.Log(k)/N);
+                QTable[state, action] += LearningRate/N * (Discount * Return - QTable[state, action]);
             }
             //SaveQTableToFile();
             VisitedStates.Clear();
             PerformedActions.Clear();
         }
         
-        public void PerformActionFromState()
+        public void PerformActionFromState(int k)
         {
             var state = Board.GetCurrentStateIndex();                               
             var availableActions = Board.GetAvailableSlots();
             int action = availableActions[0];
-            double prevMax = QTable[state, action];
+            double QprevMax = QTable[state, action];
+            double UCB = Math.Sqrt(2 * Math.Log(k) / StateCounters[state, action]);
+            double prevMax = QprevMax + UCB;
+            double UCBi = 0;
+            double QVali = 0;
 
-            for (int i = 1; i < availableActions.Count; i++)          
-                if (QTable[state, availableActions[i]] > prevMax)
+            for (int i = 1; i < availableActions.Count; i++)
+            {
+                if (QTable[state, availableActions[i]] + Math.Sqrt(2 * Math.Log(k) / StateCounters[state, availableActions[i]]) > prevMax)
                     action = availableActions[i];
+            }
 
             var randomIndex = RandomGenerator.Next(availableActions.Count);
             var randomAction = availableActions[randomIndex];

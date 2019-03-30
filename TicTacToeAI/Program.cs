@@ -50,23 +50,25 @@ namespace TicTacToeAI
             var AIO = new AI(Board, 0.9, 1, Board.Symbols[2]);
 
             var isEnded = false;
-            int Episodes = 10000000;
+            int Episodes = 1000000;
             //Zero reward for loosing/draw, only change if any AI won
             var AIXReward = 0;
             var AIOReward = 0;
             for (int i = 1; i <= Episodes; i++)
             {
+                int time = 1;
                 while (true)
                 {
-                    AIX.PerformActionFromState();
+                    AIX.PerformActionFromState(time);
                     isEnded = Board.CheckForWinner(AIX.Symbol) || Board.IsDraw();
                     if (isEnded)
                         break;
   
-                    AIO.PerformActionFromState();
+                    AIO.PerformActionFromState(time);
                     isEnded = Board.CheckForWinner(AIO.Symbol) || Board.IsDraw();
                     if (isEnded)
                         break;
+                    time++;
                 }
 
                 if (Board.CheckForWinner(AIX.Symbol))
@@ -107,9 +109,10 @@ namespace TicTacToeAI
             for (int k = 1; k < 100; k++)
             {
                 var isEnded = false;
+                int time = 1;
                 while (true)
                 {
-                    AIX.PerformActionFromState();
+                    AIX.PerformActionFromState(time);
                     Board.WriteBoard();
                     isEnded = Board.CheckForWinner(AIX.Symbol) || Board.IsDraw();
                     if (isEnded)
@@ -122,6 +125,7 @@ namespace TicTacToeAI
                     isEnded = Board.CheckForWinner('O') || Board.IsDraw();
                     if (isEnded)
                         break;
+                    time++;
                 }
                 //Zero reward for loosing/draw, only change if any AI won
                 var AIReward = 0;

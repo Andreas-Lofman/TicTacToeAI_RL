@@ -12,3 +12,4 @@ C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\TicTacToeAI_Mark
 C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\TicTacToeAI_MarkupCompile.lref
 C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\Learning.baml
 C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\TicTacToeAI.g.resources
+C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\TicTacToeAI.csprojAssemblyReference.cache
