@@ -24,7 +24,9 @@ namespace TicTacToeAI
             InitializeComponent();
             IterationLabel = label3;
             TileButtons = new Button[]{ button_1, button_2, button_3, button_4, button_5, button_6, button_7, button_8, button_9 };
-        }      
+            var nl = Environment.NewLine;
+            ExitLabel.Text = "(You need to press " + nl + "this to be able to exit," + nl + " sorry!)";
+        }
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -36,6 +38,7 @@ namespace TicTacToeAI
             AnnouncerLabel.Visible = false;
             button1.Text = "Play with AI";
             EndGameButton.Visible = false;
+            ExitLabel.Visible = false;
             Learn();
         }
 
@@ -52,6 +55,7 @@ namespace TicTacToeAI
             label3.Visible = false;
             CancelButton.Visible = false;
             EndGameButton.Visible = true;
+            ExitLabel.Visible = true;           
             button1.Text = "Reset Board";
             Play();
         }

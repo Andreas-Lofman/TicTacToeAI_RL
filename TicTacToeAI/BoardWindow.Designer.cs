@@ -45,6 +45,7 @@
             this.button_9 = new System.Windows.Forms.Button();
             this.AnnouncerLabel = new System.Windows.Forms.Label();
             this.EndGameButton = new System.Windows.Forms.Button();
+            this.ExitLabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -240,11 +241,22 @@
             this.EndGameButton.Visible = false;
             this.EndGameButton.Click += new System.EventHandler(this.EndGameButton_Click);
             // 
+            // ExitLabel
+            // 
+            this.ExitLabel.AutoSize = true;
+            this.ExitLabel.Location = new System.Drawing.Point(54, 398);
+            this.ExitLabel.Name = "ExitLabel";
+            this.ExitLabel.Size = new System.Drawing.Size(0, 20);
+            this.ExitLabel.TabIndex = 22;
+            this.ExitLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.ExitLabel.Visible = false;
+            // 
             // BoardWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 526);
+            this.Controls.Add(this.ExitLabel);
             this.Controls.Add(this.EndGameButton);
             this.Controls.Add(this.AnnouncerLabel);
             this.Controls.Add(this.button_9);
@@ -290,5 +302,6 @@
         private System.Windows.Forms.Button button_9;
         private System.Windows.Forms.Label AnnouncerLabel;
         private System.Windows.Forms.Button EndGameButton;
+        private System.Windows.Forms.Label ExitLabel;
     }
 }
