@@ -19,8 +19,8 @@ namespace TicTacToeAI
         public BoardWindow()
         {
             Board = new Board();
-            AIX = new AI(Board, 0.9, 1, Board.Symbols[1]);
-            AIO = new AI(Board, 0.9, 1, Board.Symbols[2]);
+            AIX = new AI(Board, 0.95, 1, Board.Symbols[1]);
+            AIO = new AI(Board, 0.95, 1, Board.Symbols[2]);
             InitializeComponent();
             IterationLabel = label3;
             TileButtons = new Button[]{ button_1, button_2, button_3, button_4, button_5, button_6, button_7, button_8, button_9 };
@@ -34,6 +34,7 @@ namespace TicTacToeAI
                 button.Visible = false;
 
             label3.Visible = true;
+            label2.Visible = true;
             CancelButton.Visible = true;
             AnnouncerLabel.Visible = false;
             button1.Text = "Play with AI";
@@ -57,6 +58,7 @@ namespace TicTacToeAI
             EndGameButton.Visible = true;
             ExitLabel.Visible = true;           
             button1.Text = "Reset Board";
+            label2.Visible = false;
             Play();
         }
 
@@ -94,7 +96,7 @@ namespace TicTacToeAI
             if (Board.CheckForWinner(AIX.Symbol))
             {
                 AnnouncerLabel.Text = "AI won!";
-                AIReward = 1;
+                AIReward = 10;
             }
             if (Board.CheckForWinner('O'))
             {
@@ -111,60 +113,75 @@ namespace TicTacToeAI
         private void Learn()
         {
             var isEnded = false;
-            int Episodes = 1000000;
+            int InitEpisodes = 10000000;
             //Zero reward for loosing/draw, only change if any AI won
             var AIXReward = 0;
             var AIOReward = 0;
             CancelLearning = false;
-            for (int i = 1; i <= Episodes; i++)
+            var AIs = new AI[]{AIX, AIO};
+            var AIRewards = new int[] { 0, 0 };
+            int Iterations = 20;
+            //TODO: Implement learning such that one AI is fixed for n episodes while 
+            //the other is learning, then fix that one and learn the other -> Fix AI into environment.
+            //Reset Q-table before each learning-episode to erase previous optimal behaviour
+            //(the behaviour vs a random-pick AI is not optimal for a learned AI)
+            int AIIndex;
+            for (int k = 0; k < Iterations; k++)
             {
-                if (CancelLearning)
-                    break;
-                int time = 1;               
-                while (true)
+                //0 or 1, X or O, the other is frozen
+                AIIndex = k % 2;
+                //Reset AI, start learning each opponent from scratch
+                AIs[AIIndex].ResetValues();
+                //Give every AI increasingly more iterations to "catch up" to already learned opponent
+                var Episodes = InitEpisodes * (k + 1);
+                int i = 1;
+                for (; i <= Episodes; i++)
                 {
-                    AIX.PerformActionFromState(time);
-                    isEnded = Board.CheckForWinner(AIX.Symbol) || Board.IsDraw();
-                    if (isEnded)
+                    if (CancelLearning)
                         break;
+                    int time = 1;
+                    while (true)
+                    {
+                        AIX.PerformActionFromState(time);
+                        isEnded = Board.CheckForWinner(AIX.Symbol) || Board.IsDraw();
+                        if (isEnded)
+                            break;
 
-                    AIO.PerformActionFromState(time);
-                    isEnded = Board.CheckForWinner(AIO.Symbol) || Board.IsDraw();
-                    if (isEnded)
-                        break;
-                    time++;
-                }
+                        AIO.PerformActionFromState(time);
+                        isEnded = Board.CheckForWinner(AIO.Symbol) || Board.IsDraw();
+                        if (isEnded)
+                            break;
+                        time++;
+                    }
 
-                if (Board.CheckForWinner(AIX.Symbol))
-                {
-                    AIXReward = 1;
-                    AIOReward = -1;
-                }
-                if (Board.CheckForWinner(AIO.Symbol))
-                {
-                    AIOReward = 1;
-                    AIXReward = -1;
-                }
-                else
-                {
-                    AIOReward = 0;
-                    AIXReward = 0;
-                }
-                AIX.UpdateQTable(AIXReward, i, true);
-                AIO.UpdateQTable(AIOReward, i, true);
+                    if (Board.CheckForWinner(AIX.Symbol))
+                    {
+                        AIRewards[0] = 1;
+                        AIRewards[1] = -1;
+                    }
+                    if (Board.CheckForWinner(AIO.Symbol))
+                    {
+                        AIRewards[0] = -1;
+                        AIRewards[1] = 1;
+                    }
+                    else
+                    {
+                        AIRewards[0] = 0;
+                        AIRewards[1] = 0;
+                    }
+                    AIs[AIIndex].UpdateQTable(AIRewards[AIIndex], i, true);
 
-                if (i % 1000 == 0)
-                {
-                    AIX.SaveQTableToFile();
-                    AIO.SaveQTableToFile();
-                    label2.Text = "Running "+ i + " out of " + Episodes + " episodes.";
-                    label2.Show();
+                    if (i % 1000 == 0)
+                    {
+                        AIs[AIIndex].SaveQTableToFile();
+                        label2.Text = "Running " + i + " out of " + Episodes + " episodes.";
+                        label2.Show();
+                    }
+                    Board.ResetBoard();
+                    Application.DoEvents();
                 }
-                Board.ResetBoard();
-                Application.DoEvents();
+                AIs[AIIndex].SaveQTableToFile();
             }
-            AIX.SaveQTableToFile();
-            AIO.SaveQTableToFile();
         }
 
         private void CancelButton_Click(object sender, EventArgs e)

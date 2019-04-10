@@ -19,6 +19,7 @@ namespace TicTacToeAI
         string NFilePath;
         List<int> VisitedStates;
         List<int> PerformedActions;
+        double initEps;
         double eps;
         double DiscountFactor;
         static Random RandomGenerator = new Random();
@@ -44,6 +45,7 @@ namespace TicTacToeAI
             PerformedActions = new List<int>();
             ReadFromFile();
             eps = Eps;
+            initEps = Eps;
             DiscountFactor = discount;
         }
 
@@ -82,16 +84,22 @@ namespace TicTacToeAI
                     action = availableActions[i];
             }
 
-            var randomIndex = RandomGenerator.Next(availableActions.Count);
-            var randomAction = availableActions[randomIndex];
-            if (RandomGenerator.NextDouble() < eps)
-                action = randomAction;
+            //var randomIndex = RandomGenerator.Next(availableActions.Count);
+            //var randomAction = availableActions[randomIndex];
+            //if (RandomGenerator.NextDouble() < eps)
+            //    action = randomAction;
             Board.SetTile(action, Symbol);          
             VisitedStates.Add(state);
             PerformedActions.Add(action);
             return action;
         }
 
+        public void ResetValues()
+        {
+            QTable.Initialize();
+            StateCounters.Initialize();
+            eps = initEps;
+        }
 
         private void ReadFromFile()
         {
