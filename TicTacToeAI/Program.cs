@@ -73,18 +73,18 @@ namespace TicTacToeAI
 
                 if (Board.CheckForWinner(AIX.Symbol))
                 {
-                    AIXReward = 1;
-                    AIOReward = -1;
+                    AIXReward = 10;
+                    AIOReward = -10;
                 }
                 if (Board.CheckForWinner(AIO.Symbol))
                 {
-                    AIOReward = 1;
-                    AIXReward = -1;
+                    AIOReward = 10;
+                    AIXReward = -10;
                 }
                 else
                 {
-                    AIOReward = 0;
-                    AIXReward = 0;
+                    AIOReward = -1;
+                    AIXReward = -1;
                 }
                 AIX.UpdateQTable(AIXReward, i, true);
                 AIO.UpdateQTable(AIOReward, i, true);
@@ -127,17 +127,17 @@ namespace TicTacToeAI
                         break;
                     time++;
                 }
-                //Zero reward for loosing/draw, only change if any AI won
-                var AIReward = 0;
+                //Zero reward for draw, only change if any AI won
+                var AIReward = -1;
                 if (Board.CheckForWinner(AIX.Symbol))
                 {
                     Console.WriteLine("The AI (" + AIX.Symbol + ") won!");
-                    AIReward = 1;
+                    AIReward = 10;
                 }
                 if (Board.CheckForWinner('O'))
                 {
                     Console.WriteLine("The Player (O) won!");
-                    AIReward = -1;
+                    AIReward = -10;
                 }
                 if (Board.IsDraw())
                     Console.WriteLine("Draw!");

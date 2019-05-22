@@ -8,3 +8,12 @@ C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\TicTacToeAI.Boar
 C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\TicTacToeAI.Properties.Resources.resources
 C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\TicTacToeAI.csproj.GenerateResource.cache
 C:\Users\Andreas\source\repos\TicTacToeAI\TicTacToeAI\obj\Debug\TicTacToeAI.csprojAssemblyReference.cache
+C:\Dev\TicTacToeAI_RL\TicTacToeAI\bin\Debug\TicTacToeAI.exe.config
+C:\Dev\TicTacToeAI_RL\TicTacToeAI\bin\Debug\TicTacToeAI.exe
+C:\Dev\TicTacToeAI_RL\TicTacToeAI\bin\Debug\TicTacToeAI.pdb
+C:\Dev\TicTacToeAI_RL\TicTacToeAI\obj\Debug\TicTacToeAI.BoardWindow.resources
+C:\Dev\TicTacToeAI_RL\TicTacToeAI\obj\Debug\TicTacToeAI.Properties.Resources.resources
+C:\Dev\TicTacToeAI_RL\TicTacToeAI\obj\Debug\TicTacToeAI.csproj.GenerateResource.cache
+C:\Dev\TicTacToeAI_RL\TicTacToeAI\obj\Debug\TicTacToeAI.csproj.CoreCompileInputs.cache
+C:\Dev\TicTacToeAI_RL\TicTacToeAI\obj\Debug\TicTacToeAI.exe
+C:\Dev\TicTacToeAI_RL\TicTacToeAI\obj\Debug\TicTacToeAI.pdb

@@ -69,7 +69,7 @@ namespace TicTacToeAI
             while (!EndGame)
             {
                 var action = AIX.PerformActionFromState(time);
-                TileButtons[action].Text = Board.Symbols[1].ToString();
+                TileButtons[action].Text = AIX.Symbol.ToString();
                 isEnded = Board.CheckForWinner(AIX.Symbol) || Board.IsDraw() || EndGame;
                 if (isEnded)
                     break;
@@ -169,7 +169,8 @@ namespace TicTacToeAI
                         AIRewards[0] = 0;
                         AIRewards[1] = 0;
                     }
-                    AIs[AIIndex].UpdateQTable(AIRewards[AIIndex], i, true);
+                    AIs[0].UpdateQTable(AIRewards[0], i, true);
+                    AIs[1].UpdateQTable(AIRewards[1], i, true);
 
                     if (i % 1000 == 0)
                     {

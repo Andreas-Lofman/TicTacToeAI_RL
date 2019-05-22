@@ -51,8 +51,13 @@ namespace TicTacToeAI
 
         public void UpdateQTable(int Return, int k, bool ChangeEps = true)
         {
-            if(ChangeEps)
-                eps = 1 / k;
+            if (Return > 0)
+                Return = Return - VisitedStates.Count;
+            else
+                Return = Return + VisitedStates.Count;
+
+            if (ChangeEps)
+                eps = 1/k;
             for(int i = VisitedStates.Count - 1; i >= 0; i--)
             {
                 var Discount = Math.Pow(DiscountFactor, (VisitedStates.Count - 1) - i);
@@ -60,7 +65,8 @@ namespace TicTacToeAI
                 var action = PerformedActions[i];
                 var N = ++StateCounters[state, action];
                 //Using UCB1 upper-bound Q-value: 
-                QTable[state, action] += LearningRate/N * (Discount * Return - QTable[state, action]);
+                //QTable[state, action] += LearningRate/N * (Discount * Return - QTable[state, action]);              
+                QTable[state, action] += LearningRate * (Discount * Return - QTable[state, action]);
             }
             //SaveQTableToFile();
             VisitedStates.Clear();
