@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace TicTacToeAI
 {
@@ -9,10 +11,12 @@ namespace TicTacToeAI
         //Tiles of the board. Each slot can be occupied by a player-character
         public char[] Tiles = { ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ' };
         public char[] Symbols = {' ','X','O'};
+
+        private string filePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\StateList.txt";
         //Dictionary containing a translation between layout-string and state-index in table
         //No need to include states where it's the player's turn, the AI cannot perform any actions in these cases
         public Dictionary<string, int> LayoutToState = new Dictionary<string, int>();
-        //First state: Empty field and it's the AI:s turn        
+        //First state: Empty field        
         
         public Board()
         {
@@ -66,6 +70,12 @@ namespace TicTacToeAI
                 var Key = LayoutToState.ElementAt(n).Key;
                 LayoutToState[Key] = n;
             }
+
+            //Print states to file
+            List<string> TableToWrite = new List<string>();
+            foreach (var entry in LayoutToState)
+                TableToWrite.Add(entry.Key + ";" + entry.Value);
+            File.WriteAllLines(filePath, TableToWrite.ToArray());
 
             ResetBoard();          
         }

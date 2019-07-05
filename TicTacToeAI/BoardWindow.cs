@@ -10,6 +10,10 @@ namespace TicTacToeAI
         private Board Board;
         private AI AIX;
         private AI AIO;
+        private bool AIStarts = true;
+        private AI PlayAI;
+        private char playerSymbol;
+
         
         bool CancelLearning;
         bool WaitForPlayer;
@@ -66,8 +70,13 @@ namespace TicTacToeAI
         {          
             var isEnded = false;
             int time = 1;
+            PlayAI = AIStarts ? AIX : AIO;
+            playerSymbol = AIStarts ? 'O' : 'X';
             while (!EndGame)
             {
+<<<<<<< HEAD
+                if (AIStarts)
+=======
                 var action = AIX.PerformActionFromState(time);
                 TileButtons[action].Text = AIX.Symbol.ToString();
                 isEnded = Board.CheckForWinner(AIX.Symbol) || Board.IsDraw() || EndGame;
@@ -76,13 +85,27 @@ namespace TicTacToeAI
 
                 WaitForPlayer = true;
                 while (WaitForPlayer)
+>>>>>>> 36816d8541a9f5ca3960dede20417965af52d9e0
                 {
-                    System.Threading.Thread.Sleep(500);
-                    Application.DoEvents();
-                }               
-                isEnded = Board.CheckForWinner('O') || Board.IsDraw() || EndGame;
-                if (isEnded)
-                    break;
+                    isEnded = PerformAIMove(PlayAI, time);
+                    if (isEnded)
+                        break;
+
+                    isEnded = WaitForPlayerMove(playerSymbol);
+                    if (isEnded)
+                        break;
+                }
+                else
+                {
+                    isEnded = WaitForPlayerMove(playerSymbol);
+                    if (isEnded)
+                        break;
+
+                    isEnded = PerformAIMove(PlayAI, time);
+                    if (isEnded)
+                        break;
+                }
+
                 time++;
                 Application.DoEvents();
             }
@@ -93,12 +116,12 @@ namespace TicTacToeAI
             //Zero reward for loosing/draw, only change if any AI won
             var AIReward = 0;
             AnnouncerLabel.Visible = true;
-            if (Board.CheckForWinner(AIX.Symbol))
+            if (Board.CheckForWinner(PlayAI.Symbol))
             {
                 AnnouncerLabel.Text = "AI won!";
                 AIReward = 10;
             }
-            if (Board.CheckForWinner('O'))
+            if (Board.CheckForWinner(playerSymbol))
             {
                 AnnouncerLabel.Text = "Player won!";
                 AIReward = -1;
@@ -106,8 +129,26 @@ namespace TicTacToeAI
             if (Board.IsDraw())
                 AnnouncerLabel.Text = "Draw!";
 
-            AIX.UpdateQTable(AIReward, PlayCount, true);
-            AIX.SaveQTableToFile();
+            PlayAI.UpdateQTable(AIReward, PlayCount, true);
+            PlayAI.SaveQTableToFile();
+        }
+
+        private bool WaitForPlayerMove(char playerSymbol)
+        {
+            WaitForPlayer = true;
+            while (WaitForPlayer)
+            {
+                System.Threading.Thread.Sleep(500);
+                Application.DoEvents();
+            }
+            return Board.CheckForWinner(playerSymbol) || Board.IsDraw() || EndGame;
+        }
+
+        private bool PerformAIMove(AI ai, int time)
+        {
+            var action = ai.PerformActionFromState(time);
+            TileButtons[action].Text = ai.Symbol.ToString();
+            return Board.CheckForWinner(ai.Symbol) || Board.IsDraw() || EndGame;
         }
 
         private void Learn()
@@ -194,8 +235,8 @@ namespace TicTacToeAI
         {
             if (button_1.Text == "")
             {
-                button_1.Text = Board.Symbols[2].ToString();
-                Board.SetTile(0, Board.Symbols[2]);
+                button_1.Text = playerSymbol.ToString();
+                Board.SetTile(0, playerSymbol);
                 WaitForPlayer = false;
             }
         }
@@ -204,8 +245,8 @@ namespace TicTacToeAI
         {
             if (button_2.Text == "")
             {
-                button_2.Text = Board.Symbols[2].ToString();
-                Board.SetTile(1, Board.Symbols[2]);
+                button_2.Text = playerSymbol.ToString();
+                Board.SetTile(1, playerSymbol);
                 WaitForPlayer = false;
             }
         }
@@ -214,8 +255,8 @@ namespace TicTacToeAI
         {
             if (button_3.Text == "")
             {
-                button_3.Text = Board.Symbols[2].ToString();
-                Board.SetTile(2, Board.Symbols[2]);
+                button_3.Text = playerSymbol.ToString();
+                Board.SetTile(2, playerSymbol);
                 WaitForPlayer = false;
             }
         }
@@ -224,8 +265,8 @@ namespace TicTacToeAI
         {
             if (button_4.Text == "")
             {
-                button_4.Text = Board.Symbols[2].ToString();
-                Board.SetTile(3, Board.Symbols[2]);
+                button_4.Text = playerSymbol.ToString();
+                Board.SetTile(3, playerSymbol);
                 WaitForPlayer = false;
             }
         }
@@ -234,8 +275,8 @@ namespace TicTacToeAI
         {
             if (button_5.Text == "")
             {
-                button_5.Text = Board.Symbols[2].ToString();
-                Board.SetTile(4, Board.Symbols[2]);
+                button_5.Text = playerSymbol.ToString();
+                Board.SetTile(4, playerSymbol);
                 WaitForPlayer = false;
             }
         }
@@ -244,8 +285,8 @@ namespace TicTacToeAI
         {
             if (button_6.Text == "")
             {
-                button_6.Text = Board.Symbols[2].ToString();
-                Board.SetTile(5, Board.Symbols[2]);
+                button_6.Text = playerSymbol.ToString();
+                Board.SetTile(5, playerSymbol);
                 WaitForPlayer = false;
             }
         }
@@ -254,8 +295,8 @@ namespace TicTacToeAI
         {
             if (button_7.Text == "")
             {
-                button_7.Text = Board.Symbols[2].ToString();
-                Board.SetTile(6, Board.Symbols[2]);
+                button_7.Text = playerSymbol.ToString();
+                Board.SetTile(6, playerSymbol);
                 WaitForPlayer = false;
             }
         }
@@ -264,8 +305,8 @@ namespace TicTacToeAI
         {
             if (button_8.Text == "")
             {
-                button_8.Text = Board.Symbols[2].ToString();
-                Board.SetTile(7, Board.Symbols[2]);
+                button_8.Text = playerSymbol.ToString();
+                Board.SetTile(7, playerSymbol);
                 WaitForPlayer = false;
             }
         }
@@ -274,8 +315,8 @@ namespace TicTacToeAI
         {
             if (button_9.Text == string.Empty)
             {
-                button_9.Text = Board.Symbols[2].ToString();
-                Board.SetTile(8, Board.Symbols[2]);
+                button_9.Text = playerSymbol.ToString();
+                Board.SetTile(8, playerSymbol);
                 WaitForPlayer = false;
             }
         }

@@ -17,3 +17,7 @@ C:\Dev\TicTacToeAI_RL\TicTacToeAI\obj\Debug\TicTacToeAI.csproj.GenerateResource.
 C:\Dev\TicTacToeAI_RL\TicTacToeAI\obj\Debug\TicTacToeAI.csproj.CoreCompileInputs.cache
 C:\Dev\TicTacToeAI_RL\TicTacToeAI\obj\Debug\TicTacToeAI.exe
 C:\Dev\TicTacToeAI_RL\TicTacToeAI\obj\Debug\TicTacToeAI.pdb
+<<<<<<< HEAD
+C:\Dev\TicTacToeAI_RL\TicTacToeAI\obj\Debug\TicTacToeAI.csprojAssemblyReference.cache
+=======
+>>>>>>> 36816d8541a9f5ca3960dede20417965af52d9e0
